@@ -1,0 +1,232 @@
+{% extends 'layouts/base.html' %} {% block content %} <br /><br /><br />
+{% load humanize %}
+
+<div class="container">
+<br>
+<br>
+{% if sites %}
+
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Sites</h4>     
+      {%  if perms.systemsite.add_systemsite %}
+      <a class="card-description btn btn-primary" style="color: white;" data-toggle="modal" data-target="#create"> Add
+        Sites</a>
+
+        <div class="float-right">
+          <form class="ml-auto search-form d-none d-md-block" action="#">
+              <div class="row" >
+                <div class="form-group ">
+                  <input type="search" class="form-control" placeholder="Search Here">
+                </div>
+                <small>   
+                  <input type="submit" value="search" class="btn btn-primary btn-sm">
+                </small>
+              </div>
+            </form>
+        </div>
+  
+  
+
+
+
+        {% endif  %} 
+      <table class="table ">
+        <thead>
+          <tr>
+            <th>name</th>
+            <th>place</th>
+            {% if perms.systemsite.add_systemsite %}
+            <th>actions</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for site in sites %}
+          <tr>
+            <td> {{ site.name }}</td>
+
+            <td>{{ site.place }}</td>
+
+            <td class="py-1">
+              {%  if perms.systemsite.add_systemsite %}
+              <a href="javascript:void" class="btn btn-primary btn-sm" data-toggle="modal"
+                data-target="#edit{{ site.id }}">Edit</a>
+                {% endif  %}
+                {%  if perms.systemsite.add_systemsite %}
+              <a href="javascript:void" class="btn btn-danger btn-sm" data-toggle="modal"
+                data-target="#delete{{ site.id }}">Delete</a>
+                {% endif  %}
+            </td>
+
+            <!-- ===================edit======================== -->
+            <div class="modal fade" id="edit{{ site.id }}">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+
+                    {%  if perms.systemsite.add_systemsite %}
+                    <h4 class="modal-title">Edit Site</h4>
+                    {% endif  %}
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form action="{{ site.update_systemsite }}" method="POST">
+                    <div class="modal-body">
+
+                      <div class="form-group" style="padding: 10px 30px;">
+                        {% csrf_token %}
+                        <!-- =============================================================================== -->
+
+                        <p><label for="id_name">Name:</label> <input type="text" name="name" class="form-control"
+                            placeholder="enter your name" maxlength="100" required="" id="id_name" value="{{ site.name }}"></p>
+                        <p><label for="id_place">Place:</label> <input type="text" name="place" class="form-control"
+                            placeholder="enter your place" maxlength="100" required="" id="id_place" value="{{ site.place }}"></p>
+
+                        <!-- =============================================================================== -->
+
+
+                      </div>
+                    </div>
+                    
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+                     
+                      {%  if perms.systemsite.add_systemsite %}
+                      <button type="submit" class="btn btn-primary btn-sm">Update Site</button>
+                      {% endif  %}
+
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <!-- ===================delete======================== -->
+            <div class="modal fade" id="delete{{ site.id }}">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                   
+                    {%  if perms.systemsite.add_systemsite %}
+                    <h4 class="modal-title">Create Site</h4>
+                    {% endif  %}
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form action="{{ site.delete_systemsite }}">
+                    <div class="modal-body">
+
+                      <div class="form-group" style="padding: 10px 30px;">
+                        Are You sure ? you need to Delete  <strong> {{ site.name }} </strong> site ?
+
+                      </div>
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                      
+                      <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+                      
+                      {%  if perms.systemsite.add_systemsite %}
+                      <button type="submit" class="btn btn-primary btn-sm">delete Site</button>
+                      {% endif  %}
+                      
+                    </div>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% else %}
+
+<div class="jumbotron text-center">
+   
+  <h4 class="text-danger">No Any Data Found</h4>
+  <div >
+  or 
+  
+      {% if request.user.is_authenticated %}
+  <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#create"
+  style="color: white;"> Add site</a>
+  {% endif %}
+  </div>
+  </div>
+
+
+{% endif %}
+
+
+</div>
+
+<br>
+
+
+
+
+
+<div class="modal fade" id="create">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+       
+        {%  if perms.systemsite.add_systemsite %}
+        <h4 class="modal-title">Create Site</h4>
+        {% endif  %}
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{% url 'systemsite:index' %}" method="POST">
+        <div class="modal-body">
+
+          <div class="form-group" style="padding: 10px 30px;">
+            {% csrf_token %}
+            <!-- =============================================================================== -->
+
+            {{ form.as_p }}
+
+            <!-- =============================================================================== -->
+
+
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+          
+          {%  if perms.systemsite.add_systemsite %}
+          <button type="submit" class="btn btn-primary btn-sm">Create Site</button>
+          {% endif  %}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+{% endblock %}

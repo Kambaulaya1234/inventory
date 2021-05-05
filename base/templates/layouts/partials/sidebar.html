@@ -1,0 +1,86 @@
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+  
+    <br><br>
+    <li class="nav-item nav-category">Main Menu</li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+        <i class="menu-icon typcn typcn-coffee"></i>
+        <span class="menu-title">Dashboard</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic">
+        <ul class="nav flex-column sub-menu">
+          {% if perms.activity.add_activity %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'base:admin_dashboard' %}">Admin Dashboard</a>
+          </li>
+            {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'base:normal_dashboard' %}">Normal Dashboard</a>
+          </li>
+         
+        </ul>
+      </div>
+    </li>
+
+{% if user.is_superuser %}
+
+
+    <li class="nav-item">
+      {% if perms.activity.add_activity %}
+      <a class="nav-link" href="/admin/auth/user/">
+        <i class="menu-icon typcn typcn-document-text"></i>
+        <span class="menu-title">Users</span>
+      </a>
+            {% endif %}
+    </li>
+    <li class="nav-item">
+      {% if perms.weapon.add_weapon %}
+      <a class="nav-link" href="/admin/auth/group/">
+        <i class="menu-icon typcn typcn-document-text"></i>
+        <span class="menu-title">Groups</span>
+      </a>
+            {% endif %}
+    </li>
+    {% endif %}
+
+    {% if perms.weapon.add_weapon %}
+    <li class="nav-item">
+      
+      <a class="nav-link" href="{% url 'weapons_index' %}">
+        <i class="menu-icon typcn typcn-document-text"></i>
+        <span class="menu-title">Weapons</span>
+      </a>
+    </li>
+    {% endif %}
+
+    <li class="nav-item">
+      {% if perms.tracking.add_tracking %}
+      <a class="nav-link" href="{% url 'tracking:index' %}">
+        <i class="menu-icon typcn typcn-document-text"></i>
+        <span class="menu-title">Tracking</span>
+      </a>
+            {% endif %}
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'systemsite:index'%}">
+        <i class="menu-icon typcn typcn-document-text"></i>
+        <span class="menu-title">Sites</span>
+      </a>
+    </li>
+    {% if perms.activity.view_activity %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'activity:index'%}">
+        <i class="menu-icon typcn typcn-document-text"></i>
+        <span class="menu-title">Activities</span>
+      </a>
+    </li>
+    {% endif %}
+
+
+
+
+  </ul>
+</nav>
+<!-- partial -->

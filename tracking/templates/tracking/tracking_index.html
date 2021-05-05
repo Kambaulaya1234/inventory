@@ -1,0 +1,249 @@
+{% extends 'layouts/base.html' %} {% block content %} <br /><br /><br />
+{% load humanize %}
+
+<div class="container">
+
+    {% if activities %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Tracking</h4>
+            <!-- <a class="card-description btn btn-primary" data-toggle="modal" data-target="#createActivity"
+                style="color: white;">
+                Add activity</a> -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>guards</th>
+                        <th>weapon</th>
+                        <th>site</th>
+                        <th>status</th>
+                        <th>start_time</th>
+                        <th>end_time</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in activities %}
+                    <tr>
+                        <td>
+                            {{ activity.guard}}
+                        </td>
+                        <td>
+                            {{ activity.weapon }}
+                        </td>
+                        <td>
+                            {{ activity.site }}
+                        </td>
+                        <td>
+                            {% if activity.status %}
+                            <span class="badge badge-success" style="color: white;">
+                                Verified</span>
+                            {%else %}
+                            <span class="badge badge-danger"> Not Verified</span>
+
+                            {%endif %}
+                        </td>
+                        <td>{{ activity.start_time |naturaltime }}</td>
+                        <td>{{ activity.end_time}}</td>
+
+                        <td class="py-1">
+                            <a style="color: white;" data-toggle="modal" data-target="#edit{{activity.id}}"
+                                class="btn btn-primary btn-sm">Edit</a>
+                            <a style="color: white;" data-toggle="modal" data-target="#delete{{activity.id}}"
+                                class="btn btn-danger btn-sm">Delete</a>
+                            <!-- {% if activity.status %}
+                            <a href="" class="btn btn-secondary btn-sm" data-toggle="modal"
+                                data-target="#verify{{activity.id}}">UNDO</a>
+
+                            {%else %}
+                            <a href="" class="btn btn-warning btn-sm" data-toggle="modal"
+                                data-target="#verify{{activity.id}}">Verify</a>
+
+                            {%endif %} -->
+                        </td>
+
+                        <!-- edit -->
+                        <div class="modal fade" id="edit{{activity.id}}" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalScrollableTitle">
+                                            Edit Activity
+                                        </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="{{ activity.update_activity }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        <div class="modal-body">
+                                            {% csrf_token %}
+                                            <p>
+                                                <label for="id_user">User:</label>
+                                                <select>
+
+                                                    <option value="">{{ activity.user }}</option>
+                                                </select>
+                                                <!-- <input type="text" name="user" class="form-control"
+                                                    placeholder="Enter  user..." style="border-radius: 50px;"
+                                                    required="" id="id_user" value="{{ activity.user }}" /> -->
+                                            </p>
+
+                                            <p>
+                                                <label for="id_weapon">Weapon:</label>
+                                                <input type="text" name="weapon" class="form-control"
+                                                    placeholder="Enter Your weapon..." style="border-radius: 50px;"
+                                                    required="" id="id_weapon" value="{{ activity.weapon }}" />
+                                            </p>
+
+                                            <p>
+                                                <label for="id_site">Site:</label>
+                                                <select name="site" class="form-control" placeholder="Select groups"
+                                                    required="" id="id_site">
+                                                    <option value="1" selected>{{ activity.site }}</option>
+                                                </select>
+                                            </p>
+                                            <p>
+                                                <label for="id_status">Status:</label>
+                                                <input type="checkbox" name="status" id="id_status"
+                                                    {% if activity.status %} checked {% endif %} />
+                                            </p>
+
+                                            <p>
+                                                <label for="id_end_time">End time:</label>
+                                                <input type="text" name="end_time" class="form-control"
+                                                    placeholder="Enter  end time..." style="border-radius: 50px;"
+                                                    required="" id="id_end_time" value="{{ activity.end_time }}" />
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                Update Activity
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- delete -->
+                        <div class="modal fade" id="verify{{activity.id}}" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalScrollableTitle">
+                                            Verify Weapon
+                                        </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Is employee
+                                        <strong style="color: red;"> {{ activity.user }} </strong>
+                                        return Weapon
+                                        <strong style="color: red;"> {{ activity.weapon }} </strong>
+                                        ?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <a href="{{ activity.verify_activity }}" class="btn btn-danger">Yes? 
+                                            {% if activity.status %}
+                                            UNDO
+
+                                            {% else %}
+                                            Verify
+
+                                            {% endif %}
+
+                                        
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- delete -->
+                        <div class="modal fade" id="delete{{activity.id}}" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalScrollableTitle">
+                                            Delete activity
+                                        </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are You Sure you need to Delete
+                                        <strong style="color: red;"> {{ activity.user }} </strong>Activity?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <a href="{{ activity.delete_activity }}" class="btn btn-danger">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="jumbotron text-center">
+
+        <h4 class="text-danger">No Any tracked Activities
+        </h4>
+        <div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
+<br />
+
+<!-- Create Model -->
+
+<div class="modal fade" id="createActivity" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalScrollableTitle">
+                    Create Activity
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'activity:index' %}" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %} {{ form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

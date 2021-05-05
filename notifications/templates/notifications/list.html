@@ -1,0 +1,27 @@
+
+{% extends 'layouts/base.html' %} {% block content %} <br /><br /><br />
+
+<div class="container">
+    {% if notifications %}
+
+    <div >
+      <div class="float-right">
+          <a href="{% url 'notifications:clear_all'  %}" class="btn btn-danger">Clear All</a>
+      </div>
+      </div>
+      <br><br>
+    <ul class="notifications">
+       
+        {% for notice in notifications %}
+          {% include 'notifications/notice.html' %}
+        {% endfor %}
+        {%else %}
+        <div class="jumbotron text-center">
+          <h4>No Any notifications at the moment</h4>
+        </div>
+        {%endif %}
+      </ul>
+      
+
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'layouts/base.html' %} {% block content %} <br /><br /><br />
+{% load humanize %}
+
+<div class="container">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">activities</h4>
+            <a class="card-description btn btn-primary" style="color: white;"> Add activity</a>
+            <table class="table ">
+                <thead>
+                    <tr>
+                        <th>guards</th>
+                        <th>weapon</th>
+                        <th>site</th>
+                        <th>status</th>
+                        <th>start_time</th>
+                        <th>end_time</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in activities %}
+                    <tr>
+                        <td>
+                            {{ activity.user }}
+                        </td>
+                        <td>
+                            {{ activity.weapon }}
+                        </td>
+                       
+                        <td>
+                            {{ activity.site }}
+                        </td>
+                        <td>{% if activity.status %}
+                            <span class="badge badge-primary" style="color: green;"> Verified</span> 
+                            {%else %}
+                            <span  class="badge badge-danger" >  Not Verified</span> 
+                           
+                            {%endif %}
+                        </td>
+                        <td>{{ activity.start_time |naturaltime }}</td>
+                        <td>{{ activity.end_time}}</td>
+
+                        <td class="py-1">
+                            <a href="" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<br>
+
+{% endblock %}

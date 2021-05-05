@@ -1,0 +1,188 @@
+{% extends 'layouts/base.html' %} {% block content %} <br /><br /><br />
+
+<div class="container">
+{% if weapons %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Weapons</h4>
+           
+            {%  if perms.weapon.add_weapon %}
+            <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalScrollable"
+                style="color: white;"> Add Weapons</a>
+
+                <div class="float-right">
+                    <form class="ml-auto search-form d-none d-md-block" action="#">
+                        <div class="row" >
+                          <div class="form-group ">
+                            <input type="search" class="form-control" placeholder="Search Here">
+                          </div>
+                          <small>   
+                            <input type="submit" value="search" class="btn btn-primary btn-sm">
+                          </small>
+                        </div>
+                      </form>
+                </div>
+             
+              {% endif  %}  
+
+            <table class="table ">
+                <thead>
+                    <tr>
+                        <th>name</th>
+                        <th>number</th>
+                        <th>total</th>
+                        <th>image</th>
+                     
+                        <th>Actions</th>
+             
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for weapon in weapons %}
+                    <tr>
+                        <td>{{ weapon.name }}</td>
+                        <td>{{ weapon.number }}</td>
+                        <td>{{ weapon.total }}</td>
+                        <td class="py-1">
+                            <img src="{{ weapon.image.url }}" alt="." />
+                        </td>
+                        <td class="py-1">
+                        {% if perms.weapon.change_weapon %}
+                            <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
+                                data-target="#edit{{weapon.id}}">Edit</a>
+                           
+                                {% endif  %} 
+                                
+                                {%  if perms.weapon.delete_weapon%}
+                            <a style="color: white;" data-toggle="modal" data-target="#delete{{weapon.id}}"
+                                class="btn btn-danger btn-sm">Delete</a>
+                                {% endif  %} 
+                        </td>
+                    </tr>
+
+                    <!-- edit -->
+                    <div class="modal fade" id="edit{{weapon.id}}" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    {%  if perms.weapon.delete_weapon%}
+                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Edit  Weapon</h5>
+                                    {% endif  %} 
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ weapon.update_weapon }}" method="POST" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    {%  csrf_token  %}
+                                    <p> <input type="text" name="name" class="form-control" value="{{ weapon.name }}"
+                                            placeholder="Enter Your Title..." style="border-radius:50px"></p>
+                                    <p> <input type="text" name="number" class="form-control" value="{{ weapon.number }}"
+                                            placeholder="Enter Your Title..." style="border-radius:50px"></p>
+                                    <p> <input type="file" name="image" accept="image/*"></p>
+                                </div>
+                                <div class="modal-footer">
+                                   
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    {%  if perms.weapon.add_weapon %}
+                                    <button type="submit" class="btn btn-primary">Update Weapon </button>
+                                    {% endif  %} 
+                                </div>
+
+                            </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- delete -->
+                    <div class="modal fade" id="delete{{weapon.id}}" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    {%  if perms.weapon.add_weapon %}
+                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Delete Weapon</h5>
+                                    {% endif  %} 
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are You Sure ? you need to Delete Weapon <strong style="color: red;"> {{ weapon.name }} ?</strong>
+                                </div>
+                                <div class="modal-footer">
+                        
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    {%  if perms.weapon.add_weapon %}
+                                    <a href="{{ weapon.delete_weapon }}" class="btn btn-danger ">Delete</a>
+                                    {% endif  %} 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% else %}
+<div class="jumbotron text-center">
+   
+<h4 class="text-danger">No Any Data Found</h4>
+<div >
+or 
+
+    {% if request.user.is_authenticated %}
+<a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalScrollable"
+style="color: white;"> Add Weapons</a>
+{% endif %}
+</div>
+</div>
+
+
+
+{% endif %}
+
+
+
+</div>
+<br>
+
+
+
+<!-- Create Model -->
+
+<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {%  if perms.weapon.add_weapon %}
+                <h5 class="modal-title" id="exampleModalScrollableTitle">Create Weapon</h5>
+                 {% endif  %} 
+                
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'weapons_index' %}" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    {%  if perms.weapon.add_weapon %}
+                    <button type="submit" class="btn btn-primary">Create </button>
+                    {% endif  %} 
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
